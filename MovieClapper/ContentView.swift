@@ -5,26 +5,26 @@ import Combine
 struct ContentView: View {
     
     struct AnimationParams {
-        let from: Double
-        let to: Double
+        let first: Double
+        let last: Double
         let startTime: Double
         let endtime: Double
     }
     
     struct Constants {
         static let zDegreeAnimation = AnimationParams(
-            from: -30, to: 0,
+            first: -30, last: 0,
             startTime: 1, endtime: 1.7
         )
         static let xTransitionAnimation = AnimationParams(
-            from: 0, to: -300,
+            first: 0, last: -300,
             startTime: 2, endtime: 3
         )
         static let maxTime = 3.5
     }
     
-    @State private var zDegree = Constants.zDegreeAnimation.from
-    @State private var xTransition = Constants.xTransitionAnimation.from
+    @State private var zDegree = Constants.zDegreeAnimation.first
+    @State private var xTransition = Constants.xTransitionAnimation.first
     @ObservedObject private var animationManager = PauseModifierManager(maxTime: Constants.maxTime)
     
     var body: some View {
@@ -37,8 +37,8 @@ struct ContentView: View {
             .frame(width: 100)
             .offset(x: xTransition)
             .modifier(animationManager.modifier(
-                animatable: $xTransition,
-                animatableToValue: Constants.xTransitionAnimation.to,
+                propertyValue: $xTransition,
+                propertyFinalValue: Constants.xTransitionAnimation.last,
                 startTime: Constants.xTransitionAnimation.startTime,
                 endTime: Constants.xTransitionAnimation.endtime
             ))
@@ -60,8 +60,8 @@ struct ContentView: View {
                 anchor: .bottomLeading
             )
             .modifier(animationManager.modifier(
-                animatable: $zDegree,
-                animatableToValue: Constants.zDegreeAnimation.to,
+                propertyValue: $zDegree,
+                propertyFinalValue: Constants.zDegreeAnimation.last,
                 startTime: Constants.zDegreeAnimation.startTime,
                 endTime: Constants.zDegreeAnimation.endtime
             ))
@@ -83,8 +83,8 @@ struct ContentView: View {
     }
     
     private func reset() {
-        zDegree = Constants.zDegreeAnimation.from
-        xTransition = Constants.xTransitionAnimation.from
+        zDegree = Constants.zDegreeAnimation.first
+        xTransition = Constants.xTransitionAnimation.first
     }
 }
 

@@ -3,32 +3,32 @@ import SwiftUI
 struct PauseModifier: AnimatableModifier {
     
     @ObservedObject private var manager: PauseModifierManager
-    @Binding private var animatable: Double
-    private var animatableToValue: Double
+    @Binding private var propertyValue: Double
+    private var propertyFinalValue: Double
     private var startTime: Double
     private var endTime: Double
     @State private var currentTime: Double = 0
     @State private var paused: Bool = true
     @State private var animationPaused = true
-    private var animatableValue: Double
+    private var propertyCurrentValue: Double
     
-    init(animatable: Binding<Double>,
-         animatableToValue: Double,
+    init(propertyValue: Binding<Double>,
+         propertyFinalValue: Double,
          startTime: Double,
          endTime: Double,
          manager: PauseModifierManager
     ) {
-        self._animatable = animatable
-        self.animatableToValue = animatableToValue
+        self._propertyValue = propertyValue
+        self.propertyFinalValue = propertyFinalValue
         self.startTime = startTime
         self.endTime = endTime
-        self.animatableValue = animatable.wrappedValue
+        self.propertyCurrentValue = propertyValue.wrappedValue
         self.manager = manager
     }
 
     var animatableData: Double {
-        get { animatableValue }
-        set { animatableValue = newValue }
+        get { propertyCurrentValue }
+        set { propertyCurrentValue = newValue }
     }
 
     func body(content: Content) -> some View {
@@ -52,12 +52,13 @@ struct PauseModifier: AnimatableModifier {
         if paused {
             // Stop animation
             withAnimation(.easeInOut(duration: 0)) {
-                animatable = animatableValue
+                propertyValue = propertyCurrentValue
             }
         } else {
             // Continue animation
+            // .easeInOut animation can be replaced by another animation
             withAnimation(.easeInOut(duration: remainingTime)) {
-                animatable = animatableToValue
+                propertyValue = propertyFinalValue
             }
         }
     }

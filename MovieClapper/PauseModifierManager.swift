@@ -2,7 +2,7 @@ import SwiftUI
 
 class PauseModifierManager: ObservableObject {
     
-    @Published var paused = true
+    @Published private (set) var paused = true
     @Published var currentTime = 0.0
     private var playStartedTime = 0.0
     private var playStartedDate: Date?
@@ -17,13 +17,13 @@ class PauseModifierManager: ObservableObject {
     }
     
     func modifier(
-        animatable: Binding<Double>,
-        animatableToValue: Double,
+        propertyValue: Binding<Double>,
+        propertyFinalValue: Double,
         startTime: Double,
         endTime: Double
     ) -> PauseModifier {
         // at 0 time we usually reset animations,
-        // so to avoid collisions of animatable values let's set min startTime to 0.1
+        // so to avoid collisions of property values let's set min startTime to 0.1
         let startTime = max(0.1, startTime)
         
         // If a new animation starts earlier than the next one that was added earlier,
@@ -36,8 +36,8 @@ class PauseModifierManager: ObservableObject {
             animationsStartTime.insert(startTime)
         }
         return PauseModifier(
-            animatable: animatable,
-            animatableToValue: animatableToValue,
+            propertyValue: propertyValue,
+            propertyFinalValue: propertyFinalValue,
             startTime: startTime,
             endTime: endTime,
             manager: self
